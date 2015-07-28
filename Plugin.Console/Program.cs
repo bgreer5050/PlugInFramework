@@ -55,9 +55,30 @@ namespace Plugin.Console
                 if(assembly != null)
                 {
                     Type[] types = assembly.GetTypes();
-                    throw new NotImplementedException();
+                    foreach(Type type in types)
+                    {
+                        if(type.IsInterface || type.IsAbstract)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if(type.GetInterface(pluginType.FullName) != null)
+                            {
+                                pluginTypes.Add(type);
+                            }
+                        }
+                    }
                 }
             }
+
+            ICollection<IPlugin> plugins = new List<IPlugin>(pluginTypes.Count);
+            foreach(Type type in pluginTypes)
+            {
+                IPlugin plugin = (IPlugin)Activator.CreateInstance(type);
+                plugins.Add(plugin);
+            }
+
 
 
 
